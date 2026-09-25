@@ -67,7 +67,13 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            def keystorePropertiesFile = rootProject.file('key.properties')
+            def keystoreProperties = new Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+            }
+            def storeFile = keystoreProperties['storeFile']
+            signingConfig storeFile && file(storeFile).exists() ? signingConfigs.release : signingConfigs.debug
         }
         debug {
             applicationIdSuffix ".debug"
